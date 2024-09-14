@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Experimental project",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "node --experimental-strip-types --experimental-test-coverage --test src/**/*.spec.ts src/**/*.test.ts",
+    "test:watch": "node --watch --experimental-strip-types --experimental-test-coverage --test src/**/*.spec.ts src/**/*.test.ts",
+    "start": "node --experimental-strip-types --env-file=.env src/main.ts",
+    "start:debug": "node --experimental-strip-types --env-file=.env --inspect-brk src/main.ts",
+    "dev": "node --watch --experimental-strip-types --env-file=.env src/main.ts",
+    "dev:debug": "node --watch --experimental-strip-types --env-file=.env --inspect-brk src/main.ts",
+    "cli": "node --experimental-strip-types scripts/cli.ts"
+  },
+  "author": "Miguelmo <miguelmoyaortega@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/ejs": "^3.1.5",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^22.5.4",
+    "commander": "^12.1.0",
+    "ejs": "^3.1.10",
+    "inquirer": "^10.2.2"
+  },
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+}
