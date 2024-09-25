@@ -1,60 +1,74 @@
-## Estructura del Proyecto (Clean Architecture + CQRS)
+# Arquitectura del Proyecto: Clean Architecture
+
+Este proyecto sigue los principios de Clean Architecture para lograr una estructura de código modular, mantenible y escalable. La arquitectura se divide en las siguientes capas:
+
+## 1. `core` o `domain`
+
+- **Propósito:** Contiene las reglas de negocio y las entidades fundamentales de la aplicación. Es independiente de cualquier detalle de implementación, como bases de datos o frameworks de interfaz de usuario.
+- **Contenido:**
+  - **Entidades:** Representan los conceptos clave del dominio del problema.
+  - **Casos de uso:** Encapsulan la lógica de negocio y orquestan las interacciones entre las entidades y otros componentes del sistema.
+  - **Interfaces:** Definen los contratos que deben cumplir las implementaciones en otras capas (por ejemplo, repositorios o servicios externos).
+
+## 2. `infrastructure`
+
+- **Propósito:** Implementa la interacción con el mundo exterior, como bases de datos, APIs, sistemas de archivos, etc.
+- **Contenido:**
+  - **Repositorios:** Implementan las interfaces definidas en la capa `core` para acceder y persistir datos.
+  - **Servicios externos:** Encapsulan la comunicación con APIs o servicios de terceros.
+  - **Adaptadores:** Convierten los datos entre el formato utilizado en la capa `core` y el formato requerido por la infraestructura externa.
+
+## 3. `di`
+
+- **Propósito:** Centraliza la configuración de la inyección de dependencias (DI) para facilitar la gestión de las dependencias entre las diferentes capas.
+- **Contenido:**
+  - **Módulos de DI:** Definen cómo se crean y proporcionan las instancias de los servicios y repositorios.
+  - **Contenedores de DI:** Gestionan la creación y el ciclo de vida de las instancias de los servicios.
+
+## 4. `presentation`
+
+- **Propósito:** Se encarga de la interfaz de usuario y la interacción con el usuario.
+- **Contenido:**
+  - **Componentes:** Implementan la lógica de presentación y la visualización de datos.
+  - **Controladores:** Manejan las solicitudes del usuario y coordinan la interacción con los casos de uso en la capa `core`.
+  - **Vistas:** Definen la estructura y el diseño de la interfaz de usuario.
+
+### Principios clave
+
+- **Independencia del framework:** La capa `core` no depende de ningún framework específico, lo que facilita la adaptación a cambios tecnológicos o la migración a otras plataformas.
+- **Inversión de dependencias:** Las capas de alto nivel (como `presentation`) dependen de abstracciones definidas en la capa `core`, lo que permite cambiar las implementaciones en las capas inferiores sin afectar la lógica de negocio.
+- **Testeabilidad:** Cada capa se puede probar de forma aislada, lo que facilita la creación de pruebas unitarias y de integración.
+
+### Cómo usar esta arquitectura
+
+1. **Define tus entidades y reglas de negocio en la capa `core`.**
+2. **Crea interfaces en `core` para los servicios que necesitarás en otras capas.**
+3. **Implementa esas interfaces en la capa `infrastructure`.**
+4. **Configura la inyección de dependencias en la capa `di`.**
+5. **Crea tus componentes de interfaz de usuario y controladores en la capa `presentation`.**
+
+**¡Importante!** Esta documentación es una guía general. Adapta la estructura y los nombres de las carpetas según las necesidades específicas de tu proyecto. ¡No dudes en experimentar y encontrar lo que mejor funcione para ti!
+
+**¡Manos a la obra y a construir un proyecto limpio y mantenible!**
+
+**Esquema en forma de árbol**
 
 ```
-src/
-├── application
-│   ├── commands                        // Casos de uso para modificar el estado del sistema
-│   │   ├── CreateUserCommand.js        // Comando para crear un nuevo usuario
-│   │   └── UpdateUserCommand.js        // Comando para actualizar un usuario existente
-│   └── queries                         // Casos de uso para obtener datos sin modificar el estado
-│       ├── GetUserQuery.js             // Consulta para obtener un usuario por ID
-│       └── GetUsersQuery.js            // Consulta para obtener una lista de usuarios
-│   └── sagas                           // Orquestación de comandos y eventos para procesos complejos
-│       └── UserCreatedSaga.js          // Saga que maneja eventos relacionados con la creación de usuarios
-├── domain                              // Lógica de negocio y modelo de dominio
-│   ├── aggregates                      // Agrupaciones de entidades relacionadas
-│   │   └── User.js                     // Agregado que representa un usuario y su comportamiento
-│   ├── entities                        // Entidades individuales con identidad única
-│   │   └── Address.js                  // Entidad que representa una dirección
-│   └── repositories                    // Interfaces para acceder a los datos
-│       └── UserRepository.js           // Interfaz que define las operaciones CRUD para usuarios
-├── infrastructure                      // Implementación de la interacción con el mundo exterior
-│   ├── config                          // Configuraciones del sistema
-│   │   └── database.js                 // Configuración de la conexión a la base de datos
-│   ├── persistence                     // Implementación de la persistencia de datos
-│   │   ├── command-model               // Modelos para operaciones de escritura (comandos)
-│   │   │   └── UserCommandModel.js     // Implementación del repositorio para comandos
-│   │   └── query-model                 // Modelos para operaciones de lectura (consultas)
-│   │       └── UserQueryModel.js       // Implementación del repositorio para consultas
-│   └── repositories                    // Implementaciones concretas de los repositorios
-│       └── UserRepositoryImpl.js       // Implementación que delega a command-model o query-model
-└── interface adapters (o presentation) // Adaptadores para interactuar con el exterior
-    └── controllers                     // Controladores que manejan las rutas de la API
-        └── UserController.js           // Controlador para las operaciones relacionadas con usuarios
+Proyecto
+├── core/domain
+│   ├── entities (opcional)
+│   ├── reglas de negocio
+│   ├── casos de uso
+│   └── interfaces
+├── infrastructure
+│   ├── repositorios
+│   ├── servicios externos
+│   └── adaptadores
+├── di
+│   ├── módulos de DI
+│   └── contenedores de DI
+└── presentation
+    ├── componentes
+    ├── controladores
+    └── vistas
 ```
-
-**Descripción detallada de cada componente:**
-
-- **`application`**
-
-  - **`commands`**: Contiene los comandos que representan acciones que modifican el estado del sistema. Estos comandos interactúan con el dominio para realizar la lógica de negocio y con los repositorios para persistir los cambios.
-  - **`queries`**: Contiene las consultas que se utilizan para obtener datos del sistema sin modificarlo. Las consultas interactúan con el dominio y los repositorios para recuperar la información solicitada.
-
-- **`domain`**
-
-  - **`aggregates`**: Un agregado es un clúster de objetos relacionados que se tratan como una unidad para garantizar la consistencia de los datos. En este caso, `User.js` sería un agregado que representa a un usuario y encapsula su información y comportamiento.
-  - **`entities`**: Las entidades son objetos con una identidad única. Pueden existir independientemente de otros objetos y suelen tener un ciclo de vida. `Address.js` sería un ejemplo de entidad que representa una dirección.
-  - **`repositories`**: Los repositorios definen interfaces para interactuar con la persistencia de datos. `UserRepository.js` sería una interfaz que declara los métodos para guardar, buscar y actualizar usuarios.
-
-- **`infrastructure`**
-
-  - **`config`**: Contiene archivos de configuración, como `database.js` que establece la conexión a la base de datos.
-  - **`persistence`**
-    - **`command-model`**: Implementaciones de los repositorios que se utilizan para guardar y actualizar datos. `UserCommandModel.js` implementaría la interfaz `UserRepository` y utilizaría la base de datos para persistir los cambios realizados por los comandos.
-    - **`query-model`**: Implementaciones de los repositorios que se utilizan para leer datos. `UserQueryModel.js` también implementaría la interfaz `UserRepository`, pero podría utilizar una base de datos optimizada para lecturas o una caché para mejorar el rendimiento de las consultas.
-  - **`repositories`**: Contiene las implementaciones concretas de los repositorios definidos en la capa de dominio. `UserRepositoryImpl.js` implementaría la interfaz `UserRepository` y utilizaría las implementaciones del modelo de comandos o consultas según corresponda.
-
-- **`interface adapters` (o `presentation`)**
-  - **`controllers`**: Contiene los controladores que manejan las rutas de la API y la interacción con el usuario. `UserController.js` sería un ejemplo de controlador que gestionaría las solicitudes relacionadas con los usuarios, como crear, actualizar, obtener información, etc. Los controladores interactúan con los casos de uso en la capa de `application` para realizar la lógica de negocio y devuelven las respuestas adecuadas al cliente.
-
-**Esta estructura, basada en Clean Architecture y CQRS, promueve la separación de responsabilidades, la mantenibilidad, la escalabilidad y la testeabilidad de tu aplicación.**

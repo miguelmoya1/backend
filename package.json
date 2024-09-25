@@ -3,26 +3,27 @@
   "version": "1.0.0",
   "description": "Experimental project",
   "type": "module",
-  "main": "server.js",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "node --experimental-strip-types --experimental-test-coverage --test src/**/*.spec.ts src/**/*.test.ts",
-    "test:watch": "node --watch --experimental-strip-types --experimental-test-coverage --test src/**/*.spec.ts src/**/*.test.ts",
-    "start": "node --experimental-strip-types --env-file=.env src/main.ts",
-    "start:debug": "node --experimental-strip-types --env-file=.env --inspect-brk src/main.ts",
-    "dev": "node --watch --experimental-strip-types --env-file=.env src/main.ts",
-    "dev:debug": "node --watch --experimental-strip-types --env-file=.env --inspect-brk src/main.ts",
-    "cli": "node --experimental-strip-types scripts/cli.ts"
+    "example": "node --watch --experimental-strip-types --experimental-transform-types --env-file=.env example/example.ts",
+    "test": "node --experimental-strip-types --experimental-transform-types --test src/**/*.spec.ts",
+    "test:watch": "node --watch --experimental-strip-types --experimental-transform-types --test src/**/*.spec.ts",
+    "test:coverage": "node --experimental-strip-types --experimental-transform-types --experimental-test-coverage --test src/**/*.spec.ts",
+    "test:coverage:watch": "node --watch --experimental-strip-types --experimental-transform-types --experimental-test-coverage --test src/**/*.spec.ts",
+    "lint": "eslint src",
+    "start": "node --experimental-strip-types --experimental-transform-types --env-file=.env src/main.ts",
+    "start:debug": "node --experimental-strip-types --experimental-transform-types --env-file=.env --inspect-brk src/main.ts",
+    "dev": "node --watch --experimental-strip-types --experimental-transform-types --env-file=.env src/main.ts",
+    "dev:debug": "node --watch --experimental-strip-types --experimental-transform-types --env-file=.env --inspect-brk src/main.ts",
+    "cli": "node --experimental-strip-types --experimental-transform-types scripts/cli.ts"
   },
-  "author": "Miguelmo <miguelmoyaortega@gmail.com>",
+  "author": "Miguel Moya Ortega <miguelmoyaortega@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "@types/commander": "^2.12.2",
-    "@types/ejs": "^3.1.5",
-    "@types/inquirer": "^9.0.7",
     "@types/node": "^22.5.4",
-    "commander": "^12.1.0",
-    "ejs": "^3.1.10",
-    "inquirer": "^10.2.2"
+    "eslint": "^9.11.1",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.6.0"
   },
-  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+  "packageManager": "yarn@4.5.0"
 }

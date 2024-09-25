@@ -1,66 +1,39 @@
-import { readFileSync } from 'fs';
-import { createSecureServer } from 'http2';
+import type { SecureServerOptions } from 'node:http2';
+import { CommandBus } from './commands/command-bus.ts';
+import { InjectorToken } from './providers/injector-token.ts';
+import { QueryBus } from './queries/query-bus.ts';
+import { Server } from './server.ts';
 
-const options = {
-  key: readFileSync('localhost.key'),
-  cert: readFileSync('localhost.crt'),
-};
+let server: Server;
 
-const server = createSecureServer(options, (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+class Http {
+  public static createServer = (
+    options: SecureServerOptions,
+    extraOptions?: ConstructorParameters<typeof Server>[0]
+  ) => {
+    server = new Server(extraOptions);
 
-  if (req.method === 'GET') {
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive',
-    });
+    server.createServer(options);
 
-    const stream = res.stream;
+    return server;
+  };
+}
 
-    const interval = setInterval(() => {
-      const message = { message: `Hello, World! ${Date.now()}` };
-
-      stream.write(`data: ${JSON.stringify(message)}\n\n`);
-    }, 2000);
-
-    stream.on('close', () => {
-      console.log('Stream is closed');
-      clearInterval(interval);
-      res.end();
-    });
-
-    stream.on('error', (err) => {
-      console.error(err);
-      clearInterval(interval);
-      res.end();
-    });
-  } else if (req.method === 'POST') {
-    let body = '';
-
-    if (req.method === 'POST') {
-      req.on('data', (chunk) => {
-        body += chunk;
-      });
-    }
-
-    req.on('end', () => {
-      try {
-        console.log('Client data:', body);
-
-        const receivedData = JSON.parse(body || '{}');
-        console.log('Client data:', receivedData);
-      } catch (error) {
-        console.error('Error JSON:', error);
-        res.writeHead(400, { 'Content-Type': 'text/plain' });
-        res.end('JSON invalid');
-      }
-    });
+function inject(instance: typeof CommandBus): Exclude<CommandBus, 'logs' | 'register' | 'canHandle'>;
+function inject(instance: typeof QueryBus): Exclude<QueryBus, 'logs' | 'register' | 'canHandle'>;
+function inject<T>(instance: InjectorToken<T>): T;
+function inject<T>(instance: InjectorToken<T> | typeof CommandBus | typeof QueryBus) {
+  if (instance === CommandBus) {
+    return server.inject(instance) as Exclude<CommandBus, 'logs' | 'register' | 'canHandle'>;
   }
-});
 
-server.listen(3000, () => {
-  console.log('Server running at https://localhost:3000/');
-});
+  if (instance === QueryBus) {
+    return server.inject(instance) as Exclude<QueryBus, 'logs' | 'register' | 'canHandle'>;
+  }
+
+  if (instance instanceof InjectorToken) {
+    return server.inject(instance);
+  }
+}
+
+export { Http, inject };
