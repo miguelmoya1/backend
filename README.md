@@ -1,74 +1,72 @@
-# Arquitectura del Proyecto: Clean Architecture
+# Project Architecture: Clean Architecture
 
-Este proyecto sigue los principios de Clean Architecture para lograr una estructura de código modular, mantenible y escalable. La arquitectura se divide en las siguientes capas:
+This project adheres to the principles of Clean Architecture to achieve a modular, maintainable, and scalable code structure. The architecture is divided into the following layers:
 
-## 1. `core` o `domain`
+## 1. `core` or `domain`
 
-- **Propósito:** Contiene las reglas de negocio y las entidades fundamentales de la aplicación. Es independiente de cualquier detalle de implementación, como bases de datos o frameworks de interfaz de usuario.
-- **Contenido:**
-  - **Entidades:** Representan los conceptos clave del dominio del problema.
-  - **Casos de uso:** Encapsulan la lógica de negocio y orquestan las interacciones entre las entidades y otros componentes del sistema.
-  - **Interfaces:** Definen los contratos que deben cumplir las implementaciones en otras capas (por ejemplo, repositorios o servicios externos).
+- **Purpose:** Contains the business rules and fundamental entities of the application. It is independent of any implementation details, such as databases or UI frameworks.
+- **Contents:**
+  - **Entities:** Represent the key concepts of the problem domain.
+  - **Use Cases:** Encapsulate the business logic and orchestrate interactions between entities and other system components.
+  - **Interfaces:** Define the contracts that implementations in other layers must adhere to (e.g., repositories or external services).
 
 ## 2. `infrastructure`
 
-- **Propósito:** Implementa la interacción con el mundo exterior, como bases de datos, APIs, sistemas de archivos, etc.
-- **Contenido:**
-  - **Repositorios:** Implementan las interfaces definidas en la capa `core` para acceder y persistir datos.
-  - **Servicios externos:** Encapsulan la comunicación con APIs o servicios de terceros.
-  - **Adaptadores:** Convierten los datos entre el formato utilizado en la capa `core` y el formato requerido por la infraestructura externa.
+- **Purpose:** Implements the interaction with the external world, such as databases, APIs, file systems, etc.
+- **Contents:**
+  - **Repositories:** Implement the interfaces defined in the `core` layer to access and persist data.
+  - **External Services:** Encapsulate communication with APIs or third-party services.
+  - **Adapters:** Convert data between the format used in the `core` layer and the format required by the external infrastructure.
 
 ## 3. `di`
 
-- **Propósito:** Centraliza la configuración de la inyección de dependencias (DI) para facilitar la gestión de las dependencias entre las diferentes capas.
-- **Contenido:**
-  - **Módulos de DI:** Definen cómo se crean y proporcionan las instancias de los servicios y repositorios.
-  - **Contenedores de DI:** Gestionan la creación y el ciclo de vida de las instancias de los servicios.
+- **Purpose:** Centralizes the configuration of dependency injection (DI) to facilitate the management of dependencies between the different layers.
+- **Contents:**
+  - **DI Modules:** Define how service and repository instances are created and provided.
+  - **DI Containers:** Manage the creation and lifecycle of service instances.
 
 ## 4. `presentation`
 
-- **Propósito:** Se encarga de la interfaz de usuario y la interacción con el usuario.
-- **Contenido:**
-  - **Componentes:** Implementan la lógica de presentación y la visualización de datos.
-  - **Controladores:** Manejan las solicitudes del usuario y coordinan la interacción con los casos de uso en la capa `core`.
-  - **Vistas:** Definen la estructura y el diseño de la interfaz de usuario.
+- **Purpose:** Handles the user interface and user interaction.
+- **Contents:**
+  - **Components:** Implement the presentation logic and data visualization.
+  - **Controllers:** Handle user requests and coordinate interaction with use cases in the `core` layer.
+  - **Views:** Define the structure and design of the user interface.
 
-### Principios clave
+### Key Principles
 
-- **Independencia del framework:** La capa `core` no depende de ningún framework específico, lo que facilita la adaptación a cambios tecnológicos o la migración a otras plataformas.
-- **Inversión de dependencias:** Las capas de alto nivel (como `presentation`) dependen de abstracciones definidas en la capa `core`, lo que permite cambiar las implementaciones en las capas inferiores sin afectar la lógica de negocio.
-- **Testeabilidad:** Cada capa se puede probar de forma aislada, lo que facilita la creación de pruebas unitarias y de integración.
+- **Framework Independence:** The `core` layer does not depend on any specific framework, making it easier to adapt to technological changes or migrate to other platforms.
+- **Dependency Inversion:** Higher-level layers (like `presentation`) depend on abstractions defined in the `core` layer, allowing implementations in lower layers to be changed without affecting the business logic.
+- **Testability:** Each layer can be tested in isolation, facilitating the creation of unit and integration tests.
 
-### Cómo usar esta arquitectura
+### How to Use This Architecture
 
-1. **Define tus entidades y reglas de negocio en la capa `core`.**
-2. **Crea interfaces en `core` para los servicios que necesitarás en otras capas.**
-3. **Implementa esas interfaces en la capa `infrastructure`.**
-4. **Configura la inyección de dependencias en la capa `di`.**
-5. **Crea tus componentes de interfaz de usuario y controladores en la capa `presentation`.**
+1. **Define your entities and business rules in the `core` layer.**
+2. **Create interfaces in `core` for the services you'll need in other layers.**
+3. **Implement those interfaces in the `infrastructure` layer.**
+4. **Configure dependency injection in the `di` layer.**
+5. **Create your UI components and controllers in the `presentation` layer.**
 
-**¡Importante!** Esta documentación es una guía general. Adapta la estructura y los nombres de las carpetas según las necesidades específicas de tu proyecto. ¡No dudes en experimentar y encontrar lo que mejor funcione para ti!
+**Important!** This documentation is a general guide. Adapt the structure and folder names to the specific needs of your project. Feel free to experiment and find what works best for you!
 
-**¡Manos a la obra y a construir un proyecto limpio y mantenible!**
-
-**Esquema en forma de árbol**
+**Tree-like schema**
 
 ```
-Proyecto
+Project
 ├── core/domain
-│   ├── entities (opcional)
-│   ├── reglas de negocio
-│   ├── casos de uso
+│   ├── entities (optional)
+│   ├── business rules
+│   ├── use cases
 │   └── interfaces
 ├── infrastructure
-│   ├── repositorios
-│   ├── servicios externos
-│   └── adaptadores
+│   ├── repositories
+│   ├── external services
+│   └── adapters
 ├── di
-│   ├── módulos de DI
-│   └── contenedores de DI
+│   ├── DI modules
+│   └── DI containers
 └── presentation
-    ├── componentes
-    ├── controladores
-    └── vistas
+    ├── components
+    ├── controllers
+    └── views
 ```
