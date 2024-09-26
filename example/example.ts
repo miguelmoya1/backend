@@ -11,7 +11,7 @@ users.GET('/', async () => {
 });
 
 users.GET('/:id', async (req) => {
-  return `User`;
+  return `User` + req?.headers[':path'];
 });
 
 const games = new Controller('games');
