@@ -14,6 +14,26 @@ export class Route<T> {
   }
 
   public canHandle(url: string, method: string) {
+    if (this.#url.includes(':')) {
+      const urlParts = prepareUrl(this.#url).split('/');
+      const parts = prepareUrl(url).split('/');
+      if (urlParts.length !== parts.length) {
+        return false;
+      }
+
+      for (let i = 0; i < urlParts.length; i++) {
+        if (urlParts[i].startsWith(':')) {
+          continue;
+        }
+
+        if (urlParts[i] !== parts[i]) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
     return this.#method === method && prepareUrl(this.#url) === prepareUrl(url);
   }
 
